@@ -1,0 +1,18 @@
+{
+  "name": "imovies-project",
+  "version": "1.0.0",
+  "description": "IMovies Fullstack Movie Booking Platform",
+  "scripts": {
+    "start:backend": "npm --prefix backend start",
+    "dev:backend": "npm --prefix backend run dev",
+    "start:frontend": "npm --prefix frontend start",
+    "build:frontend": "npm --prefix frontend run build"
+  },
+  "keywords": [
+    "imovies",
+    "mern",
+    "movie-booking"
+  ],
+  "author": "",
+  "license": "ISC"
+}
