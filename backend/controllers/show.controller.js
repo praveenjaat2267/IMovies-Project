@@ -38,7 +38,20 @@ exports.getShowsByMovie = async (req, res, next) => {
     }
 };
 
-// @desc    Get single show details by ID (including booked seats)
+// Helper to purge expired locks on a show document
+const purgeExpiredLocks = async (show) => {
+    if (!show || !show.lockedSeats || show.lockedSeats.length === 0) return false;
+    const now = new Date();
+    const activeLocks = show.lockedSeats.filter(l => new Date(l.expiresAt) > now);
+    if (activeLocks.length !== show.lockedSeats.length) {
+        show.lockedSeats = activeLocks;
+        await show.save();
+        return true;
+    }
+    return false;
+};
+
+// @desc    Get single show details by ID (including booked & locked seats)
 // @route   GET /api/shows/:id
 // @access  Public
 exports.getShowById = async (req, res, next) => {
@@ -50,11 +63,127 @@ exports.getShowById = async (req, res, next) => {
         if (!show) {
             return res.status(404).json({ msg: 'Show not found' });
         }
+
+        await purgeExpiredLocks(show);
         res.json(show);
     } catch (err) {
         if (err.kind === 'ObjectId') {
             return res.status(404).json({ msg: 'Show not found' });
         }
+        next(err);
+    }
+};
+
+// @desc    Temporarily lock selected seats during checkout (Seat Locking Mechanism)
+// @route   POST /api/shows/:id/lock-seats
+// @access  Private
+exports.lockSeats = async (req, res, next) => {
+    try {
+        const { seats, lockDurationMinutes } = req.body;
+        const showId = req.params.id;
+
+        if (!seats || !Array.isArray(seats) || seats.length === 0) {
+            return res.status(400).json({ msg: 'Please provide an array of seats to lock' });
+        }
+
+        const show = await Show.findById(showId);
+        if (!show) {
+            return res.status(404).json({ msg: 'Show not found' });
+        }
+
+        await purgeExpiredLocks(show);
+
+        // Check if any seat is already booked
+        const alreadyBooked = seats.filter(seat => show.bookedSeats.includes(seat));
+        if (alreadyBooked.length > 0) {
+            return res.status(400).json({
+                msg: `Seat(s) [${alreadyBooked.join(', ')}] have already been booked.`
+            });
+        }
+
+        // Check if any seat is locked by another user
+        const now = new Date();
+        const lockedByOthers = (show.lockedSeats || []).filter(
+            l => seats.includes(l.seatNumber) &&
+                 l.userId.toString() !== req.user.id &&
+                 new Date(l.expiresAt) > now
+        );
+
+        if (lockedByOthers.length > 0) {
+            const lockedSeatNumbers = lockedByOthers.map(l => l.seatNumber);
+            return res.status(409).json({
+                msg: `Seat(s) [${lockedSeatNumbers.join(', ')}] are currently reserved by another customer. Please choose different seats.`,
+                lockedSeats: lockedSeatNumbers
+            });
+        }
+
+        const durationMinutes = Number(lockDurationMinutes) || 5;
+        const expiresAt = new Date(Date.now() + durationMinutes * 60 * 1000);
+
+        if (!show.lockedSeats) show.lockedSeats = [];
+
+        // Remove any prior locks by this user on these seats
+        show.lockedSeats = show.lockedSeats.filter(
+            l => !(l.userId.toString() === req.user.id && seats.includes(l.seatNumber))
+        );
+
+        // Add new locks
+        for (const seat of seats) {
+            show.lockedSeats.push({
+                seatNumber: seat,
+                userId: req.user.id,
+                lockedAt: new Date(),
+                expiresAt
+            });
+        }
+
+        await show.save();
+
+        res.json({
+            success: true,
+            msg: `Seats [${seats.join(', ')}] locked for ${durationMinutes} minutes.`,
+            lockedSeats: seats,
+            expiresAt,
+            lockTimeoutSeconds: durationMinutes * 60
+        });
+    } catch (err) {
+        next(err);
+    }
+};
+
+// @desc    Release temporarily locked seats
+// @route   POST /api/shows/:id/unlock-seats
+// @access  Private
+exports.unlockSeats = async (req, res, next) => {
+    try {
+        const { seats } = req.body;
+        const showId = req.params.id;
+
+        const show = await Show.findById(showId);
+        if (!show) {
+            return res.status(404).json({ msg: 'Show not found' });
+        }
+
+        if (!show.lockedSeats) show.lockedSeats = [];
+
+        if (seats && Array.isArray(seats) && seats.length > 0) {
+            show.lockedSeats = show.lockedSeats.filter(
+                l => !(l.userId.toString() === req.user.id && seats.includes(l.seatNumber))
+            );
+        } else {
+            // Unlock all seats held by this user for this show
+            show.lockedSeats = show.lockedSeats.filter(
+                l => l.userId.toString() !== req.user.id
+            );
+        }
+
+        await show.save();
+
+        res.json({
+            success: true,
+            msg: 'Seats released successfully.'
+        });
+    } catch (err) {
         next(err);
     }
 };

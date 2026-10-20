@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { bookingAPI } from '../services/api';
+import QRCodeTicket from '../components/QRCodeTicket';
 
 function MyBookings() {
     const [bookings, setBookings] = useState([]);
@@ -236,20 +237,28 @@ function MyBookings() {
 
                                         <hr className="my-3 text-muted" />
 
-                                        {/* Reserved Seats Section */}
-                                        <div className="mb-3">
-                                            <div className="fw-semibold small text-uppercase text-secondary mb-2">
-                                                Reserved Seats ({booking.seats ? booking.seats.length : 0})
+                                        {/* Reserved Seats & QR Code Section */}
+                                        <div className="row align-items-center g-2 mb-3">
+                                            <div className="col-sm-7">
+                                                <div className="fw-semibold small text-uppercase text-secondary mb-2">
+                                                    Reserved Seats ({booking.seats ? booking.seats.length : 0})
+                                                </div>
+                                                <div className="d-flex flex-wrap gap-2 mb-2">
+                                                    {booking.seats && booking.seats.map(seat => (
+                                                        <span 
+                                                            key={seat} 
+                                                            className={`badge ${isCancelled ? 'bg-secondary' : 'bg-danger'} px-3 py-2 fs-6 shadow-sm`}
+                                                        >
+                                                            💺 {seat}
+                                                        </span>
+                                                    ))}
+                                                </div>
                                             </div>
-                                            <div className="d-flex flex-wrap gap-2">
-                                                {booking.seats && booking.seats.map(seat => (
-                                                    <span 
-                                                        key={seat} 
-                                                        className={`badge ${isCancelled ? 'bg-secondary' : 'bg-danger'} px-3 py-2 fs-6 shadow-sm`}
-                                                    >
-                                                        💺 {seat}
-                                                    </span>
-                                                ))}
+                                            <div className="col-sm-5 text-center">
+                                                <QRCodeTicket booking={booking} size={105} showDetails={false} />
+                                                <small className="text-muted d-block mt-1" style={{ fontSize: '0.7rem' }}>
+                                                    🔍 Click QR to enlarge
+                                                </small>
                                             </div>
                                         </div>
                                     </div>

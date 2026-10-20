@@ -1,5 +1,32 @@
 const mongoose = require('mongoose');
 
+const reviewSchema = new mongoose.Schema({
+    userId: { 
+        type: mongoose.Schema.Types.ObjectId, 
+        ref: 'User', 
+        required: [true, 'User reference is required'] 
+    },
+    userName: { 
+        type: String, 
+        required: [true, 'User name is required'],
+        trim: true 
+    },
+    rating: { 
+        type: Number, 
+        required: [true, 'Rating is required (1-5)'],
+        min: [1, 'Rating must be at least 1'],
+        max: [5, 'Rating cannot exceed 5'] 
+    },
+    comment: { 
+        type: String, 
+        required: [true, 'Review comment is required'],
+        trim: true,
+        maxlength: [500, 'Comment cannot exceed 500 characters'] 
+    }
+}, {
+    timestamps: true
+});
+
 const movieSchema = new mongoose.Schema({
     title: { 
         type: String, 
@@ -40,6 +67,11 @@ const movieSchema = new mongoose.Schema({
         max: [10, 'Rating cannot exceed 10'],
         default: 8.5
     },
+    numReviews: {
+        type: Number,
+        default: 0
+    },
+    reviews: [reviewSchema],
     posterUrl: { 
         type: String, 
         default: 'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=600&q=80' 

@@ -65,7 +65,9 @@ export const showAPI = {
     getByMovie: (movieId) => api.get(`/shows/movie/${movieId}`),
     getById: (id) => api.get(`/shows/${id}`),
     create: (data) => api.post('/shows', data),
-    delete: (id) => api.delete(`/shows/${id}`)
+    delete: (id) => api.delete(`/shows/${id}`),
+    lockSeats: (id, seats, lockDurationMinutes = 5) => api.post(`/shows/${id}/lock-seats`, { seats, lockDurationMinutes }),
+    unlockSeats: (id, seats) => api.post(`/shows/${id}/unlock-seats`, { seats })
 };
 
 export const bookingAPI = {

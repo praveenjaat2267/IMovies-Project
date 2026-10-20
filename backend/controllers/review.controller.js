@@ -22,6 +22,11 @@ exports.addReview = async (req, res, next) => {
         const user = await User.findById(req.user.id);
         const userName = user ? user.name : 'Movie Fan';
 
+        const movie = await Movie.findById(movieId);
+        if (!movie) {
+            return res.status(404).json({ msg: 'Movie not found' });
+        }
+
         const newReview = new Review({
             userId: req.user.id,
             userName,
@@ -32,14 +37,36 @@ exports.addReview = async (req, res, next) => {
 
         const savedReview = await newReview.save();
 
-        // Dynamically recalculate movie rating
+        // Update embedded reviews array in Movie model
+        if (!movie.reviews) movie.reviews = [];
+        // Check if user already reviewed in embedded list
+        const existingReviewIndex = movie.reviews.findIndex(
+            r => r.userId && r.userId.toString() === req.user.id
+        );
+        if (existingReviewIndex !== -1) {
+            movie.reviews[existingReviewIndex] = {
+                userId: req.user.id,
+                userName,
+                rating: Number(rating),
+                comment: comment.trim()
+            };
+        } else {
+            movie.reviews.unshift({
+                userId: req.user.id,
+                userName,
+                rating: Number(rating),
+                comment: comment.trim()
+            });
+        }
+
+        // Dynamically recalculate movie rating & count
         const allReviews = await Review.find({ movieId });
         if (allReviews.length > 0) {
             const avgRating = allReviews.reduce((sum, r) => sum + r.rating, 0) / allReviews.length;
-            // scale 5-star rating to 10-point scale for consistency
-            const scaledRating = Math.round((avgRating * 2) * 10) / 10;
-            await Movie.findByIdAndUpdate(movieId, { rating: scaledRating });
+            movie.rating = Math.round((avgRating * 2) * 10) / 10;
+            movie.numReviews = allReviews.length;
         }
+        await movie.save();
 
         res.status(201).json(savedReview);
     } catch (err) {

@@ -33,8 +33,28 @@ exports.createBooking = async (req, res, next) => {
                         msg: `Seats [${alreadyBooked.join(', ')}] have already been booked by another viewer. Please choose other seats.`
                     });
                 }
-                // Lock seats in the show document
+
+                // Verify seats are not locked by another customer
+                const now = new Date();
+                const lockedByOthers = (show.lockedSeats || []).filter(
+                    l => seats.includes(l.seatNumber) &&
+                         l.userId.toString() !== req.user.id &&
+                         new Date(l.expiresAt) > now
+                );
+                if (lockedByOthers.length > 0) {
+                    return res.status(409).json({
+                        msg: `Seat(s) [${lockedByOthers.map(l => l.seatNumber).join(', ')}] are currently held by another viewer. Please select other seats.`
+                    });
+                }
+
+                // Add to booked seats in the show document
                 show.bookedSeats.push(...seats);
+
+                // Release seat locks for these seats
+                if (show.lockedSeats && show.lockedSeats.length > 0) {
+                    show.lockedSeats = show.lockedSeats.filter(l => !seats.includes(l.seatNumber));
+                }
+
                 await show.save();
             }
         }

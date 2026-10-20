@@ -6,6 +6,7 @@
 .brand-gradient {
   background: linear-gradient(135deg, #ffffff 20%, #00e5ff 60%, #ff2a5f 100%);
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
   font-weight: 800;
   letter-spacing: -0.5px;
@@ -14,12 +15,14 @@
 .text-gradient-red {
   background: linear-gradient(135deg, #ff6b8b, #ff2a5f);
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
 .text-gradient-cyan {
   background: linear-gradient(135deg, #a5f3fc, #00e5ff);
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 

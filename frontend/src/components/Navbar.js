@@ -68,13 +68,15 @@ function Navbar() {
 
                                 {/* User Greeting Badge */}
                                 <li className="nav-item ms-lg-3 my-2 my-lg-0">
-                                    <span className="badge bg-secondary py-2 px-3 d-inline-flex align-items-center gap-2" style={{ borderRadius: '50px' }}>
-                                        <span className="rounded-circle bg-danger text-white d-inline-flex align-items-center justify-content-center" style={{ width: '22px', height: '22px', fontSize: '0.75rem' }}>
-                                            {userName ? userName.charAt(0).toUpperCase() : 'U'}
+                                    <Link to="/profile" className="text-decoration-none">
+                                        <span className="badge bg-secondary py-2 px-3 d-inline-flex align-items-center gap-2" style={{ borderRadius: '50px' }}>
+                                            <span className="rounded-circle bg-danger text-white d-inline-flex align-items-center justify-content-center" style={{ width: '22px', height: '22px', fontSize: '0.75rem' }}>
+                                                {userName ? userName.charAt(0).toUpperCase() : 'U'}
+                                            </span>
+                                            <span className="text-white">{userName || 'Profile'}</span>
+                                            {userRole === 'admin' && <span className="badge bg-warning text-dark ms-1" style={{ fontSize: '0.65rem' }}>Admin</span>}
                                         </span>
-                                        <span>{userName || 'User'}</span>
-                                        {userRole === 'admin' && <span className="badge bg-warning text-dark ms-1" style={{ fontSize: '0.65rem' }}>Admin</span>}
-                                    </span>
+                                    </Link>
                                 </li>
 
                                 {/* Logout Button */}

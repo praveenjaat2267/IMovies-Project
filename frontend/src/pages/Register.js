@@ -30,6 +30,7 @@ function Register() {
             // Auto-save session if token returned
             if (res.data.token) {
                 localStorage.setItem('token', res.data.token);
+                localStorage.setItem('userId', res.data.user?.id || res.data.user?._id || '');
                 localStorage.setItem('userName', res.data.user.name);
                 localStorage.setItem('userEmail', res.data.user.email);
                 localStorage.setItem('userRole', res.data.user.role);

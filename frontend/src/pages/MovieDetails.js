@@ -208,67 +208,145 @@ function MovieDetails() {
                 {/* Community Reviews & Ratings */}
                 <div className="col-lg-6">
                     <div className="card shadow-sm border-0 h-100 rounded-3">
-                        <div className="card-header bg-white py-3">
-                            <h5 className="fw-bold mb-0">💬 Ratings & Verified Audience Reviews ({reviews.length})</h5>
+                        <div className="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                            <h5 className="fw-bold mb-0">💬 Verified Audience Reviews ({reviews.length})</h5>
+                            <span className="badge bg-warning text-dark fw-bold">
+                                ⭐ {movie.rating ? movie.rating.toFixed(1) : '8.5'}/10
+                            </span>
                         </div>
                         <div className="card-body">
-                            {/* Write Review Form */}
+                            {/* Rating Breakdown Overview */}
+                            {reviews.length > 0 && (
+                                <div className="p-3 bg-light rounded-3 mb-4 border">
+                                    <div className="row align-items-center text-center text-sm-start">
+                                        <div className="col-sm-4 border-end-sm mb-3 mb-sm-0 text-center">
+                                            <div className="display-6 fw-bold text-dark">
+                                                {(reviews.reduce((s, r) => s + r.rating, 0) / reviews.length).toFixed(1)}
+                                            </div>
+                                            <div className="text-warning fs-5">
+                                                {'★'.repeat(Math.round(reviews.reduce((s, r) => s + r.rating, 0) / reviews.length))}
+                                                {'☆'.repeat(5 - Math.round(reviews.reduce((s, r) => s + r.rating, 0) / reviews.length))}
+                                            </div>
+                                            <small className="text-muted">{reviews.length} verified ratings</small>
+                                        </div>
+                                        <div className="col-sm-8">
+                                            {[5, 4, 3, 2, 1].map(stars => {
+                                                const count = reviews.filter(r => r.rating === stars).length;
+                                                const pct = reviews.length > 0 ? (count / reviews.length) * 100 : 0;
+                                                return (
+                                                    <div key={stars} className="d-flex align-items-center gap-2 mb-1" style={{ fontSize: '0.78rem' }}>
+                                                        <span style={{ width: '25px' }} className="fw-semibold text-muted">{stars}★</span>
+                                                        <div className="progress flex-grow-1" style={{ height: '6px' }}>
+                                                            <div 
+                                                                className="progress-bar bg-warning" 
+                                                                role="progressbar" 
+                                                                style={{ width: `${pct}%` }}
+                                                            ></div>
+                                                        </div>
+                                                        <span style={{ width: '25px' }} className="text-end text-muted">{count}</span>
+                                                    </div>
+                                                );
+                                            })}
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Interactive Write Review Form */}
                             <form onSubmit={handleReviewSubmit} className="mb-4 p-3 bg-light rounded-3 border">
-                                <h6 className="fw-bold mb-2">Write a Review</h6>
+                                <h6 className="fw-bold mb-2 text-dark">Rate & Review This Movie</h6>
                                 {reviewMsg.text && (
                                     <div className={`alert alert-${reviewMsg.type} small py-2`} role="alert">
                                         {reviewMsg.text}
                                     </div>
                                 )}
-                                <div className="mb-2">
-                                    <label className="form-label small fw-semibold">Your Rating (1 to 5 Stars):</label>
-                                    <select
-                                        className="form-select form-select-sm"
-                                        value={rating}
-                                        onChange={(e) => setRating(e.target.value)}
-                                    >
-                                        <option value="5">⭐⭐⭐⭐⭐ (5/5) - Masterpiece</option>
-                                        <option value="4">⭐⭐⭐⭐ (4/5) - Very Good</option>
-                                        <option value="3">⭐⭐⭐ (3/5) - Average</option>
-                                        <option value="2">⭐⭐ (2/5) - Below Average</option>
-                                        <option value="1">⭐ (1/5) - Poor</option>
-                                    </select>
+
+                                {/* Interactive 5-Star Selector */}
+                                <div className="mb-3">
+                                    <label className="form-label small fw-semibold text-muted d-block mb-1">
+                                        Click stars to rate:
+                                    </label>
+                                    <div className="d-flex align-items-center gap-2">
+                                        <div className="d-flex gap-1 fs-3 cursor-pointer" style={{ cursor: 'pointer' }}>
+                                            {[1, 2, 3, 4, 5].map((star) => (
+                                                <span
+                                                    key={star}
+                                                    onClick={() => setRating(star)}
+                                                    className="transition-transform"
+                                                    style={{ 
+                                                        color: star <= rating ? '#f59e0b' : '#d1d5db',
+                                                        transition: 'color 0.15s ease, transform 0.15s ease',
+                                                        userSelect: 'none'
+                                                    }}
+                                                    title={`Rate ${star} Star${star > 1 ? 's' : ''}`}
+                                                >
+                                                    ★
+                                                </span>
+                                            ))}
+                                        </div>
+                                        <span className="badge bg-dark px-2 py-1 small">
+                                            {rating === 5 && '⭐⭐⭐⭐⭐ 5/5 - Masterpiece'}
+                                            {rating === 4 && '⭐⭐⭐⭐ 4/5 - Very Good'}
+                                            {rating === 3 && '⭐⭐⭐ 3/5 - Good'}
+                                            {rating === 2 && '⭐⭐ 2/5 - Fair'}
+                                            {rating === 1 && '⭐ 1/5 - Poor'}
+                                        </span>
+                                    </div>
                                 </div>
+
                                 <div className="mb-2">
                                     <textarea
                                         className="form-control form-control-sm"
-                                        rows="2"
-                                        placeholder="Share your thoughts on the movie plot, acting, and visuals..."
+                                        rows="3"
+                                        placeholder="Share your thoughts on the movie plot, performance, direction, and audio-visuals..."
                                         value={comment}
                                         onChange={(e) => setComment(e.target.value)}
+                                        maxLength={500}
                                         required
                                     ></textarea>
+                                    <div className="text-end text-muted small mt-1" style={{ fontSize: '0.72rem' }}>
+                                        {comment.length}/500 characters
+                                    </div>
                                 </div>
                                 <button
                                     type="submit"
-                                    className="btn btn-dark btn-sm w-100 fw-bold"
+                                    className="btn btn-danger btn-sm w-100 fw-bold shadow-sm"
                                     disabled={reviewSubmitting}
                                 >
-                                    {reviewSubmitting ? 'Submitting...' : 'Post Verified Review'}
+                                    {reviewSubmitting ? 'Posting Review...' : 'Submit Verified Review'}
                                 </button>
                             </form>
 
                             {/* Reviews List */}
                             {reviews.length === 0 ? (
-                                <p className="text-muted small mb-0">No reviews yet. Be the first to review this movie!</p>
+                                <div className="text-center py-4 text-muted">
+                                    <div className="fs-3 mb-1">✍️</div>
+                                    <p className="small mb-0">No audience reviews yet. Be the first to share your thoughts!</p>
+                                </div>
                             ) : (
-                                <div className="d-flex flex-column gap-3" style={{ maxHeight: '300px', overflowY: 'auto' }}>
+                                <div className="d-flex flex-column gap-3" style={{ maxHeight: '360px', overflowY: 'auto' }}>
                                     {reviews.map(r => (
-                                        <div key={r._id} className="border-bottom pb-2">
+                                        <div key={r._id || Math.random()} className="p-3 bg-white rounded-3 border shadow-sm">
                                             <div className="d-flex justify-content-between align-items-center mb-1">
-                                                <span className="fw-bold small">{r.userName}</span>
-                                                <span className="text-warning small">
+                                                <div className="d-flex align-items-center gap-2">
+                                                    <div 
+                                                        className="rounded-circle bg-dark text-white d-flex align-items-center justify-content-center fw-bold"
+                                                        style={{ width: '28px', height: '28px', fontSize: '0.75rem' }}
+                                                    >
+                                                        {r.userName ? r.userName.charAt(0).toUpperCase() : 'U'}
+                                                    </div>
+                                                    <div>
+                                                        <span className="fw-bold small text-dark d-block leading-tight">{r.userName || 'Movie Fan'}</span>
+                                                        <span className="badge bg-light text-muted border" style={{ fontSize: '0.65rem' }}>Verified Viewer</span>
+                                                    </div>
+                                                </div>
+                                                <span className="text-warning fs-6">
                                                     {'★'.repeat(r.rating)}{'☆'.repeat(5 - r.rating)}
                                                 </span>
                                             </div>
-                                            <p className="text-muted small mb-1">{r.comment}</p>
-                                            <div className="text-secondary small" style={{ fontSize: '0.75rem' }}>
-                                                {new Date(r.createdAt).toLocaleDateString()}
+                                            <p className="text-muted small mb-1 mt-2">{r.comment}</p>
+                                            <div className="text-secondary small text-end" style={{ fontSize: '0.72rem' }}>
+                                                📅 {r.createdAt ? new Date(r.createdAt).toLocaleDateString() : 'Recent'}
                                             </div>
                                         </div>
                                     ))}

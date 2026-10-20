@@ -1,5 +1,25 @@
 const mongoose = require('mongoose');
 
+const lockedSeatSchema = new mongoose.Schema({
+    seatNumber: { 
+        type: String, 
+        required: true 
+    },
+    userId: { 
+        type: mongoose.Schema.Types.ObjectId, 
+        ref: 'User', 
+        required: true 
+    },
+    lockedAt: { 
+        type: Date, 
+        default: Date.now 
+    },
+    expiresAt: { 
+        type: Date, 
+        required: true 
+    }
+}, { _id: false });
+
 const showSchema = new mongoose.Schema({
     movie: { 
         type: mongoose.Schema.Types.ObjectId, 
@@ -35,6 +55,10 @@ const showSchema = new mongoose.Schema({
     bookedSeats: { 
         type: [String], 
         default: [] 
+    },
+    lockedSeats: {
+        type: [lockedSeatSchema],
+        default: []
     }
 }, {
     timestamps: true
