@@ -52,35 +52,35 @@ function Home() {
 
     return (
         <div className="container py-4">
-            {/* Hero Banner */}
-            <div className="p-4 p-md-5 mb-4 rounded-3 text-white shadow-lg position-relative overflow-hidden"
-                style={{
-                    background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)',
-                    border: '1px solid rgba(255,255,255,0.1)'
-                }}>
-                <div className="col-lg-8 position-relative" style={{ zIndex: 1 }}>
-                    <span className="badge bg-danger px-3 py-2 text-uppercase mb-3 fw-bold letter-spacing-1">
-                        🎬 IMovies Premier Experience
-                    </span>
-                    <h1 className="display-4 fw-bold mb-3">Immersive Cinema. Seamless Seat Booking.</h1>
-                    <p className="lead text-light opacity-90 mb-4">
-                        Discover top blockbusters, reserve luxury seats in real-time, and experience cutting-edge IMAX & Dolby Atmos sound at your favorite cinema.
+            {/* Hero Banner with Cinematic Glow */}
+            <div className="p-4 p-md-5 mb-4 cinematic-hero text-white position-relative">
+                <div className="col-lg-8 position-relative" style={{ zIndex: 2 }}>
+                    <div className="hero-pill-badge mb-3">
+                        <span style={{ fontSize: '0.9rem' }}>✨</span>
+                        <span>NEXT-GEN PREMIERE CINEMA</span>
+                    </div>
+                    <h1 className="display-4 fw-bold mb-3">
+                        Immersive Cinema. <br />
+                        <span className="brand-gradient">Seamless Seat Booking.</span>
+                    </h1>
+                    <p className="lead text-secondary mb-4" style={{ maxWidth: '640px', fontSize: '1.05rem', lineHeight: '1.6' }}>
+                        Experience blockbusters in ultra-vivid 4K laser projection and Dolby Atmos multidimensional sound. Reserve luxury recliner seats with instant live confirmation.
                     </p>
-                    <div className="d-flex flex-wrap gap-2">
-                        <a href="#browse-section" className="btn btn-danger btn-lg px-4 fw-bold shadow">
+                    <div className="d-flex flex-wrap gap-3">
+                        <a href="#browse-section" className="btn btn-danger btn-lg px-4 fw-bold rounded-pill shadow">
                             🎟️ Explore Now Showing
                         </a>
                         {token ? (
-                            <Link to="/my-bookings" className="btn btn-outline-light btn-lg px-4">
+                            <Link to="/my-bookings" className="btn btn-outline-light btn-lg px-4 rounded-pill">
                                 View My Bookings
                             </Link>
                         ) : (
-                            <Link to="/register" className="btn btn-outline-warning btn-lg px-4">
+                            <Link to="/register" className="btn btn-outline-warning btn-lg px-4 rounded-pill">
                                 Join IMovies Club
                             </Link>
                         )}
                         {userRole === 'admin' && (
-                            <Link to="/admin" className="btn btn-warning btn-lg px-4 text-dark fw-bold">
+                            <Link to="/admin" className="btn btn-warning btn-lg px-4 text-dark fw-bold rounded-pill">
                                 🛡️ Admin Dashboard
                             </Link>
                         )}
@@ -88,39 +88,39 @@ function Home() {
                 </div>
             </div>
 
-            {/* Quick Metrics Bar */}
+            {/* Quick Metrics Bar (Open9 Counter Styling) */}
             <div className="row g-3 mb-4 text-center">
                 <div className="col-4">
-                    <div className="bg-light p-3 rounded-3 shadow-sm border">
-                        <div className="fs-3 fw-bold text-danger">{movies.length}</div>
-                        <div className="small text-muted fw-semibold">Movies Showing</div>
+                    <div className="metric-tile">
+                        <div className="fs-2 fw-bold text-gradient-red">{movies.length}</div>
+                        <div className="small text-secondary fw-semibold">Movies Showing</div>
                     </div>
                 </div>
                 <div className="col-4">
-                    <div className="bg-light p-3 rounded-3 shadow-sm border">
-                        <div className="fs-3 fw-bold text-warning">4K Dolby</div>
-                        <div className="small text-muted fw-semibold">Audio & Visuals</div>
+                    <div className="metric-tile">
+                        <div className="fs-2 fw-bold text-gradient-cyan">4K Dolby</div>
+                        <div className="small text-secondary fw-semibold">Audio & Visuals</div>
                     </div>
                 </div>
                 <div className="col-4">
-                    <div className="bg-light p-3 rounded-3 shadow-sm border">
-                        <div className="fs-3 fw-bold text-success">Instant</div>
-                        <div className="small text-muted fw-semibold">Seat Confirmation</div>
+                    <div className="metric-tile">
+                        <div className="fs-2 fw-bold text-warning">Instant</div>
+                        <div className="small text-secondary fw-semibold">Seat Sync</div>
                     </div>
                 </div>
             </div>
 
             {/* Interactive Filters & Search Section */}
-            <div id="browse-section" className="card shadow-sm border-0 mb-4 p-3 bg-white rounded-3">
+            <div id="browse-section" className="card shadow-sm border-0 mb-4 p-4 rounded-4">
                 <div className="row g-3 align-items-center">
                     {/* Search Field */}
                     <div className="col-md-4">
                         <div className="input-group">
-                            <span className="input-group-text bg-light border-end-0">🔍</span>
+                            <span className="input-group-text bg-transparent border-end-0 text-secondary">🔍</span>
                             <input
                                 type="text"
-                                className="form-control border-start-0"
-                                placeholder="Search by title, director, keywords..."
+                                className="form-control border-start-0 ps-0"
+                                placeholder="Search by title, genre, actor..."
                                 value={search}
                                 onChange={(e) => setSearch(e.target.value)}
                             />
@@ -168,14 +168,14 @@ function Home() {
                     </div>
                 </div>
 
-                {/* Quick Genre Pills */}
-                <div className="d-flex flex-wrap gap-2 mt-3 pt-2 border-top">
-                    <span className="small text-muted align-self-center me-1">Popular:</span>
-                    {['Action', 'Sci-Fi', 'Drama', 'Adventure'].map(genre => (
+                {/* Quick Genre Pills (Open9 Tag Style) */}
+                <div className="d-flex flex-wrap align-items-center gap-2 mt-3 pt-3 border-top" style={{ borderColor: 'rgba(255, 255, 255, 0.08)' }}>
+                    <span className="small text-secondary me-2 fw-semibold">Hot Genres:</span>
+                    {['Action', 'Sci-Fi', 'Drama', 'Adventure', 'Thriller'].map(genre => (
                         <button
                             key={genre}
                             type="button"
-                            className={`btn btn-sm py-0 px-2 rounded-pill ${selectedGenre === genre ? 'btn-danger' : 'btn-outline-secondary'}`}
+                            className={`category-pill-btn ${selectedGenre === genre ? 'active' : ''}`}
                             onClick={() => setSelectedGenre(selectedGenre === genre ? 'All' : genre)}
                         >
                             {genre}
@@ -184,16 +184,24 @@ function Home() {
                     {(selectedGenre !== 'All' || selectedLanguage !== 'All' || search) && (
                         <button
                             type="button"
-                            className="btn btn-sm btn-link text-danger py-0 px-2 text-decoration-none ms-auto"
+                            className="btn btn-sm btn-link text-danger py-0 px-2 text-decoration-none ms-auto fw-semibold"
                             onClick={() => {
                                 setSearch('');
                                 setSelectedGenre('All');
                                 setSelectedLanguage('All');
                             }}
                         >
-                            Clear Filters
+                            ✕ Reset Filters
                         </button>
                     )}
+                </div>
+            </div>
+
+            {/* Movies Section Header */}
+            <div className="d-flex align-items-center justify-content-between mb-3 px-1">
+                <div>
+                    <h3 className="fw-bold mb-0">Hot & Fresh Releases</h3>
+                    <p className="text-secondary small mb-0">Showing {sortedMovies.length} featured cinema screenings</p>
                 </div>
             </div>
 
@@ -203,17 +211,17 @@ function Home() {
                     <div className="spinner-border text-danger" role="status" style={{ width: '3.5rem', height: '3.5rem' }}>
                         <span className="visually-hidden">Loading movies...</span>
                     </div>
-                    <p className="text-muted mt-3 fw-semibold">Loading movie listings from IMovies servers...</p>
+                    <p className="text-secondary mt-3 fw-semibold">Fetching IMAX & Cinema listings...</p>
                 </div>
             ) : sortedMovies.length === 0 ? (
-                <div className="text-center py-5 card shadow-sm border-0 rounded-3">
+                <div className="text-center py-5 card shadow-sm border-0 rounded-4 p-5">
                     <div className="fs-1 mb-2">🎬</div>
                     <h4 className="fw-bold">No movies found</h4>
-                    <p className="text-muted mx-auto" style={{ maxWidth: '400px' }}>
-                        We couldn't find any movie matching your current filters. Try resetting search terms or check back soon.
+                    <p className="text-secondary mx-auto mb-4" style={{ maxWidth: '400px' }}>
+                        We couldn't find any movie matching your current filters. Try resetting search terms or selecting another genre.
                     </p>
                     <button
-                        className="btn btn-outline-danger mx-auto"
+                        className="btn btn-outline-danger mx-auto rounded-pill px-4"
                         onClick={() => {
                             setSearch('');
                             setSelectedGenre('All');
@@ -229,66 +237,67 @@ function Home() {
                         const defaultPoster = 'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=600&q=80';
                         return (
                             <div className="col-12 col-sm-6 col-md-4 col-lg-4" key={movie._id}>
-                                <div className="card h-100 shadow-sm border-0 rounded-3 overflow-hidden d-flex flex-column position-relative">
+                                <div className="card h-100 shadow-sm border-0 rounded-4 overflow-hidden d-flex flex-column position-relative movie-card-wrapper">
                                     {/* Rating Badge Overlay */}
                                     <span 
-                                        className="badge bg-warning text-dark position-absolute top-0 end-0 m-2 fw-bold shadow-sm"
-                                        style={{ zIndex: 2 }}
+                                        className="badge badge-glow-amber position-absolute top-0 end-0 m-3 fw-bold"
+                                        style={{ zIndex: 3 }}
                                     >
                                         ⭐ {movie.rating ? movie.rating.toFixed(1) : '8.5'}/10
                                     </span>
 
                                     {/* Poster Container */}
                                     <div 
-                                        style={{ height: '280px', overflow: 'hidden', backgroundColor: '#111', cursor: 'pointer' }}
+                                        className="movie-poster-box"
                                         onClick={() => navigate(`/movie/${movie._id}`)}
                                         title="Click to view full details"
+                                        style={{ cursor: 'pointer' }}
                                     >
                                         <img
                                             src={movie.posterUrl || defaultPoster}
                                             alt={movie.title}
-                                            className="w-100 h-100"
-                                            style={{ objectFit: 'cover' }}
                                             onError={(e) => {
                                                 e.target.src = defaultPoster;
                                             }}
                                         />
+                                        <div className="movie-poster-overlay"></div>
                                     </div>
 
                                     {/* Movie Info */}
-                                    <div className="card-body d-flex flex-column p-3">
+                                    <div className="card-body d-flex flex-column p-4">
                                         <h5 
-                                            className="card-title fw-bold text-dark text-truncate mb-2" 
-                                            style={{ cursor: 'pointer' }}
+                                            className="card-title fw-bold text-truncate mb-2" 
+                                            style={{ cursor: 'pointer', fontSize: '1.2rem' }}
                                             onClick={() => navigate(`/movie/${movie._id}`)}
                                             title={movie.title}
                                         >
                                             {movie.title}
                                         </h5>
 
-                                        <div className="d-flex flex-wrap gap-1 mb-2">
+                                        <div className="d-flex flex-wrap gap-2 mb-3">
                                             <span className="badge bg-secondary">{movie.language || 'English'}</span>
-                                            <span className="badge bg-light text-dark border">⏱️ {movie.duration} mins</span>
+                                            <span className="badge bg-light">⏱️ {movie.duration} mins</span>
                                         </div>
 
-                                        <p className="card-text text-muted small mb-2 flex-grow-1" style={{ display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                                        <p className="card-text text-secondary small mb-3 flex-grow-1" style={{ display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', lineHeight: '1.5' }}>
                                             {movie.description || 'Action-packed cinema adventure with state of the art sound and visuals.'}
                                         </p>
 
-                                        <div className="small text-secondary mb-3">
-                                            <strong>Genre:</strong> {Array.isArray(movie.genre) ? movie.genre.join(', ') : movie.genre}
+                                        <div className="small text-secondary mb-3 d-flex align-items-center gap-1">
+                                            <span className="text-muted">Genre:</span>
+                                            <span className="text-light fw-medium">{Array.isArray(movie.genre) ? movie.genre.join(', ') : movie.genre}</span>
                                         </div>
 
                                         {/* Action Buttons */}
-                                        <div className="d-flex gap-2">
+                                        <div className="d-flex gap-2 pt-2 border-top" style={{ borderColor: 'rgba(255, 255, 255, 0.08)' }}>
                                             <button
-                                                className="btn btn-outline-dark btn-sm flex-fill"
+                                                className="btn btn-outline-secondary btn-sm flex-fill rounded-pill"
                                                 onClick={() => navigate(`/movie/${movie._id}`)}
                                             >
                                                 Details
                                             </button>
                                             <button
-                                                className="btn btn-danger btn-sm flex-fill fw-bold"
+                                                className="btn btn-danger btn-sm flex-fill fw-bold rounded-pill shadow"
                                                 onClick={() => navigate(`/book/${movie._id}`)}
                                             >
                                                 🎟️ Book Seats

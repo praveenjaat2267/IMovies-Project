@@ -1,21 +1,281 @@
-import React from 'react';
+/* =========================================================
+   Cinematic Dark Mode Styling (Open9 Template Aesthetic)
+   ========================================================= */
 
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route
+/* Brand & Typography Utilities */
+.brand-gradient {
+  background: linear-gradient(135deg, #ffffff 20%, #00e5ff 60%, #ff2a5f 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 800;
+  letter-spacing: -0.5px;
 }
 
-from 'react-router-dom';
-import Navbar from './components/Navbar';
-import Home from './pages/Home';
-
-function App() {
-  return (<Router> <Navbar /> <Routes> <Route path="/" element= {
-      <Home />
-    }
-
-    /> </Routes> </Router>);
+.text-gradient-red {
+  background: linear-gradient(135deg, #ff6b8b, #ff2a5f);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
-export default App;
+.text-gradient-cyan {
+  background: linear-gradient(135deg, #a5f3fc, #00e5ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Glassmorphic Navbar */
+.cinematic-navbar {
+  background: rgba(11, 15, 25, 0.82) !important;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.7);
+  transition: all 0.3s ease;
+}
+
+.cinematic-navbar .nav-link {
+  color: #94a3b8 !important;
+  font-weight: 500;
+  padding: 0.5rem 1rem !important;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.cinematic-navbar .nav-link:hover,
+.cinematic-navbar .nav-link.active {
+  color: #ffffff !important;
+  background: rgba(255, 255, 255, 0.05);
+  text-shadow: 0 0 12px rgba(255, 255, 255, 0.4);
+}
+
+/* Hero Section with Ambient Glow */
+.cinematic-hero {
+  position: relative;
+  background: linear-gradient(135deg, #0e1628 0%, #111a30 50%, #161a2b 100%);
+  border: 1px solid rgba(255, 255, 255, 0.09) !important;
+  border-radius: 24px !important;
+  overflow: hidden;
+  box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.cinematic-hero::before {
+  content: '';
+  position: absolute;
+  top: -60px;
+  right: -60px;
+  width: 320px;
+  height: 320px;
+  background: radial-gradient(circle, rgba(255, 42, 95, 0.22) 0%, transparent 70%);
+  border-radius: 50%;
+  pointer-events: none;
+  filter: blur(40px);
+}
+
+.cinematic-hero::after {
+  content: '';
+  position: absolute;
+  bottom: -60px;
+  left: 20%;
+  width: 280px;
+  height: 280px;
+  background: radial-gradient(circle, rgba(0, 229, 255, 0.18) 0%, transparent 70%);
+  border-radius: 50%;
+  pointer-events: none;
+  filter: blur(40px);
+}
+
+.hero-pill-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 16px;
+  background: rgba(255, 42, 95, 0.12);
+  border: 1px solid rgba(255, 42, 95, 0.35);
+  border-radius: 50px;
+  color: #ff4d79;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  box-shadow: 0 0 15px rgba(255, 42, 95, 0.2);
+}
+
+/* Quick Metrics Cards (Open9 Counter Styling) */
+.metric-tile {
+  background: rgba(19, 27, 46, 0.6) !important;
+  border: 1px solid rgba(255, 255, 255, 0.07) !important;
+  border-radius: 16px;
+  padding: 1.25rem 1rem;
+  backdrop-filter: blur(12px);
+  transition: all 0.25s ease;
+}
+
+.metric-tile:hover {
+  transform: translateY(-4px);
+  border-color: rgba(0, 229, 255, 0.3) !important;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 0 20px rgba(0, 229, 255, 0.15) !important;
+}
+
+/* Movie Card Components */
+.movie-card-wrapper {
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
+}
+
+.movie-card-wrapper:hover {
+  transform: translateY(-8px);
+}
+
+.movie-poster-box {
+  position: relative;
+  overflow: hidden;
+  border-radius: 16px 16px 0 0;
+  height: 290px;
+  background-color: #0d121e;
+}
+
+.movie-poster-box img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.movie-card-wrapper:hover .movie-poster-box img {
+  transform: scale(1.08);
+}
+
+.movie-poster-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.1) 40%, rgba(19, 27, 46, 0.95) 100%);
+  pointer-events: none;
+}
+
+.badge-glow-amber {
+  background: rgba(255, 183, 3, 0.15) !important;
+  color: #ffc107 !important;
+  border: 1px solid rgba(255, 183, 3, 0.4) !important;
+  box-shadow: 0 0 12px rgba(255, 183, 3, 0.25);
+  backdrop-filter: blur(8px);
+}
+
+.badge-glow-cyan {
+  background: rgba(0, 229, 255, 0.12) !important;
+  color: #00e5ff !important;
+  border: 1px solid rgba(0, 229, 255, 0.35) !important;
+  box-shadow: 0 0 12px rgba(0, 229, 255, 0.2);
+}
+
+/* Category Filter Pills (Open9 Hot & Fresh style) */
+.category-pill-btn {
+  background: rgba(255, 255, 255, 0.04);
+  color: #94a3b8;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  padding: 6px 18px;
+  border-radius: 50px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.category-pill-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.category-pill-btn.active {
+  background: linear-gradient(135deg, #ff2a5f, #ff4373);
+  color: #ffffff;
+  border-color: transparent;
+  box-shadow: 0 0 18px rgba(255, 42, 95, 0.4);
+}
+
+/* Curved Cinema Screen Component */
+.cinema-screen-wrap {
+  perspective: 600px;
+  margin-bottom: 2rem;
+}
+
+.screen-curved-arc {
+  width: 80%;
+  max-width: 520px;
+  height: 14px;
+  margin: 0 auto;
+  border-top: 4px solid #00e5ff;
+  border-radius: 50% 50% 0 0;
+  box-shadow: 0 -8px 25px rgba(0, 229, 255, 0.65), 0 -2px 10px rgba(255, 255, 255, 0.8);
+  position: relative;
+}
+
+.screen-curved-arc::after {
+  content: 'IMAX CURVED DOLBY VISION SCREEN';
+  display: block;
+  text-align: center;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 3px;
+  color: #00e5ff;
+  margin-top: 14px;
+  text-shadow: 0 0 12px rgba(0, 229, 255, 0.6);
+}
+
+/* Seat Selection Buttons */
+.seat-unit-btn {
+  width: 46px;
+  height: 42px;
+  border-radius: 10px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.04);
+  color: #cbd5e1;
+}
+
+.seat-unit-btn:hover:not(:disabled) {
+  border-color: #00e5ff;
+  color: #00e5ff;
+  background: rgba(0, 229, 255, 0.1);
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 0 15px rgba(0, 229, 255, 0.35);
+}
+
+.seat-unit-btn.selected {
+  background: linear-gradient(135deg, #ff2a5f, #ff4373) !important;
+  color: #ffffff !important;
+  border-color: transparent !important;
+  transform: scale(1.08);
+  box-shadow: 0 0 18px rgba(255, 42, 95, 0.6) !important;
+}
+
+.seat-unit-btn:disabled {
+  background: rgba(255, 255, 255, 0.02) !important;
+  border-color: rgba(255, 255, 255, 0.04) !important;
+  color: #475569 !important;
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+/* Glass Panels & Checkout Summary */
+.glass-panel {
+  background: rgba(19, 27, 46, 0.75) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  backdrop-filter: blur(16px);
+  border-radius: 20px;
+  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.7);
+}
+
+/* Pulse Animation */
+@keyframes neonPulse {
+  0% { box-shadow: 0 0 15px rgba(255, 42, 95, 0.3); }
+  50% { box-shadow: 0 0 25px rgba(255, 42, 95, 0.6); }
+  100% { box-shadow: 0 0 15px rgba(255, 42, 95, 0.3); }
+}
+
+.pulse-glow {
+  animation: neonPulse 2.5s infinite ease-in-out;
+}
