@@ -41,7 +41,10 @@ api.interceptors.response.use(
 // Modular API Service Endpoints
 export const authAPI = {
     login: (credentials) => api.post('/auth/login', credentials),
+    sendLoginOtp: (data) => api.post('/auth/send-login-otp', data),
     register: (userData) => api.post('/auth/register', userData),
+    verifyOtp: (data) => api.post('/auth/verify-otp', data),
+    resendOtp: (data) => api.post('/auth/resend-otp', data),
     getProfile: () => api.get('/auth/me')
 };
 

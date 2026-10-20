@@ -53,7 +53,7 @@ exports.getMovieById = async (req, res, next) => {
 // @access  Private/Admin
 exports.createMovie = async (req, res, next) => {
     try {
-        let { title, description, genre, language, duration, rating, posterUrl, trailerUrl, releaseDate } = req.body;
+        let { title, description, genre, language, duration, rating, posterUrl, bannerUrl, showtimes, trailerUrl, releaseDate } = req.body;
 
         if (!title || !title.trim()) {
             return res.status(400).json({ msg: 'Movie title is required' });
@@ -78,6 +78,8 @@ exports.createMovie = async (req, res, next) => {
             duration: Number(duration),
             rating: rating ? Number(rating) : 8.5,
             posterUrl: posterUrl && posterUrl.trim() ? posterUrl.trim() : undefined,
+            bannerUrl: bannerUrl && bannerUrl.trim() ? bannerUrl.trim() : undefined,
+            showtimes: Array.isArray(showtimes) && showtimes.length > 0 ? showtimes : undefined,
             trailerUrl: trailerUrl && trailerUrl.trim() ? trailerUrl.trim() : undefined,
             releaseDate: releaseDate ? new Date(releaseDate) : new Date()
         });
@@ -94,7 +96,7 @@ exports.createMovie = async (req, res, next) => {
 // @access  Private/Admin
 exports.updateMovie = async (req, res, next) => {
     try {
-        let { title, description, genre, language, duration, rating, posterUrl, trailerUrl, releaseDate } = req.body;
+        let { title, description, genre, language, duration, rating, posterUrl, bannerUrl, showtimes, trailerUrl, releaseDate } = req.body;
 
         const updateData = {};
         if (title !== undefined) updateData.title = title.trim();
@@ -103,6 +105,8 @@ exports.updateMovie = async (req, res, next) => {
         if (duration !== undefined) updateData.duration = Number(duration);
         if (rating !== undefined) updateData.rating = Number(rating);
         if (posterUrl !== undefined) updateData.posterUrl = posterUrl.trim();
+        if (bannerUrl !== undefined) updateData.bannerUrl = bannerUrl.trim();
+        if (showtimes !== undefined) updateData.showtimes = Array.isArray(showtimes) ? showtimes : [showtimes];
         if (trailerUrl !== undefined) updateData.trailerUrl = trailerUrl.trim();
         if (releaseDate !== undefined) updateData.releaseDate = new Date(releaseDate);
 

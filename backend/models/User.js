@@ -38,8 +38,29 @@ const userSchema = new mongoose.Schema({
     },
     phone: {
         type: String,
-        trim: true,
-        default: ''
+        required: [true, 'Phone number is required'],
+        unique: true,
+        trim: true
+    },
+    isEmailVerified: {
+        type: Boolean,
+        default: false
+    },
+    isPhoneVerified: {
+        type: Boolean,
+        default: false
+    },
+    emailOtp: {
+        type: String,
+        default: null
+    },
+    phoneOtp: {
+        type: String,
+        default: null
+    },
+    otpExpiresAt: {
+        type: Date,
+        default: null
     }
 }, {
     timestamps: true

@@ -49,43 +49,16 @@ mongoose.connect(process.env.MONGO_URI)
     .then(async () => {
         console.log("MongoDB Connected Successfully");
 
-        // 1. Seed Movies if collection is empty
-        const movieCount = await Movie.countDocuments();
-        let seededMovies = [];
-        if (movieCount === 0) {
-            seededMovies = await Movie.create([
-                {
-                    title: "Inception",
-                    description: "A thief who steals corporate secrets through the use of dream-sharing technology is given the inverse task of planting an idea into the mind of a C.E.O.",
-                    genre: ["Sci-Fi", "Action"],
-                    language: "English",
-                    duration: 148,
-                    rating: 8.8,
-                    posterUrl: "https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=600&q=80"
-                },
-                {
-                    title: "Interstellar",
-                    description: "When Earth becomes uninhabitable in the future, a farmer and ex-NASA pilot, Joseph Cooper, is tasked to pilot a spacecraft along with a team of researchers to find a new planet for humans.",
-                    genre: ["Sci-Fi", "Adventure", "Drama"],
-                    language: "English",
-                    duration: 169,
-                    rating: 8.7,
-                    posterUrl: "https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?auto=format&fit=crop&w=600&q=80"
-                },
-                {
-                    title: "The Dark Knight",
-                    description: "When the menace known as the Joker wreaks havoc and chaos on the people of Gotham, Batman must accept one of the greatest psychological and physical tests of his ability to fight injustice.",
-                    genre: ["Action", "Crime", "Drama"],
-                    language: "English",
-                    duration: 152,
-                    rating: 9.0,
-                    posterUrl: "https://images.unsplash.com/photo-1509281373149-e957c6296406?auto=format&fit=crop&w=600&q=80"
-                }
-            ]);
-            console.log("Sample movies seeded successfully!");
-        } else {
-            seededMovies = await Movie.find().limit(3);
+        // 1. Seed or Upgrade Movies to 8 Real-World Blockbusters
+        for (const movieData of (Movie.blockbusters || [])) {
+            await Movie.findOneAndUpdate(
+                { title: movieData.title },
+                { $set: movieData },
+                { upsert: true, new: true }
+            );
         }
+        const seededMovies = await Movie.find();
+        console.log(`Synced ${seededMovies.length} blockbuster movies with banners & showtimes!`);
 
         // 2. Seed Theaters if collection is empty
         const theaterCount = await Theater.countDocuments();
@@ -160,7 +133,9 @@ mongoose.connect(process.env.MONGO_URI)
                 email: 'admin@imovies.com',
                 password: hashedPassword,
                 role: 'admin',
-                phone: '+91 9876543210'
+                phone: '+919876543210',
+                isEmailVerified: true,
+                isPhoneVerified: true
             });
             console.log("Default admin account created in User model: admin@imovies.com / admin123");
         }

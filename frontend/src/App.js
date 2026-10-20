@@ -5,8 +5,8 @@ import Navbar from './components/Navbar';
 import Home from './pages/Home';
 import MovieDetails from './pages/MovieDetails';
 import Booking from './pages/Booking';
-import Login from './pages/Login';
-import Register from './pages/Register';
+import LoginPage from './pages/LoginPage';
+import RegisterPage from './pages/RegisterPage';
 import ProfilePage from './pages/ProfilePage';
 import AdminDashboard from './pages/AdminDashboard';
 
@@ -21,8 +21,8 @@ function App() {
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/my-bookings" element={<ProfilePage />} />
         <Route path="/admin" element={<AdminDashboard />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
       </Routes>
     </Router>
   );

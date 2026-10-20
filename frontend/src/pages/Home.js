@@ -88,6 +88,49 @@ function Home() {
                 </div>
             </div>
 
+            {/* BookMyShow / District Style Horizontal Spotlight Banner */}
+            {sortedMovies.length > 0 && (
+                <div 
+                    className="card shadow-lg border-0 mb-4 rounded-4 overflow-hidden position-relative text-white" 
+                    style={{ 
+                        minHeight: '320px',
+                        background: `linear-gradient(to right, rgba(11, 15, 25, 0.95) 0%, rgba(11, 15, 25, 0.7) 45%, rgba(11, 15, 25, 0.25) 100%), url(${sortedMovies[0].bannerUrl || sortedMovies[0].posterUrl}) center/cover no-repeat`
+                    }}
+                >
+                    <div className="card-body p-4 p-md-5 d-flex flex-column justify-content-center position-relative" style={{ maxWidth: '640px', zIndex: 2 }}>
+                        <div className="d-flex align-items-center gap-2 mb-2">
+                            <span className="badge bg-danger text-uppercase px-3 py-1">BLOCKBUSTER SPOTLIGHT</span>
+                            <span className="badge bg-warning text-dark fw-bold">⭐ {sortedMovies[0].rating ? sortedMovies[0].rating.toFixed(1) : '8.8'}/10</span>
+                        </div>
+                        <h2 className="display-6 fw-bold mb-2 text-white">{sortedMovies[0].title}</h2>
+                        <p className="text-light opacity-90 small mb-3" style={{ lineHeight: '1.6', maxWidth: '520px' }}>
+                            {sortedMovies[0].description}
+                        </p>
+                        <div className="d-flex align-items-center gap-2 flex-wrap mb-3">
+                            <span className="badge bg-secondary">{sortedMovies[0].language}</span>
+                            <span className="badge bg-dark border border-secondary">⏱️ {sortedMovies[0].duration} mins</span>
+                            {Array.isArray(sortedMovies[0].genre) && sortedMovies[0].genre.map(g => (
+                                <span key={g} className="badge bg-light text-dark">{g}</span>
+                            ))}
+                        </div>
+                        <div className="d-flex gap-2">
+                            <button 
+                                className="btn btn-danger btn-sm px-4 py-2 fw-bold rounded-pill shadow"
+                                onClick={() => navigate(`/book/${sortedMovies[0]._id}`)}
+                            >
+                                🎟️ Book Tickets
+                            </button>
+                            <button 
+                                className="btn btn-outline-light btn-sm px-3 py-2 rounded-pill"
+                                onClick={() => navigate(`/movie/${sortedMovies[0]._id}`)}
+                            >
+                                Details →
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             {/* Quick Metrics Bar (Open9 Counter Styling) */}
             <div className="row g-3 mb-4 text-center">
                 <div className="col-4">
