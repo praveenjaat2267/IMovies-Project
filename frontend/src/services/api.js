@@ -69,6 +69,7 @@ export const showAPI = {
     getById: (id) => api.get(`/shows/${id}`),
     create: (data) => api.post('/shows', data),
     delete: (id) => api.delete(`/shows/${id}`),
+    syncShows: (movieId) => api.post(`/shows/sync/${movieId}`),
     lockSeats: (id, seats, lockDurationMinutes = 5) => api.post(`/shows/${id}/lock-seats`, { seats, lockDurationMinutes }),
     unlockSeats: (id, seats) => api.post(`/shows/${id}/unlock-seats`, { seats })
 };

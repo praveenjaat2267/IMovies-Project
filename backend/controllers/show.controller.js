@@ -1,6 +1,7 @@
 const Show = require('../models/Show');
 const Movie = require('../models/Movie');
 const Theater = require('../models/Theater');
+const { seedShowsForMovie, ensureTheaters } = require('../utils/showSeeder');
 
 // @desc    Get all shows with movie & theater populated
 // @route   GET /api/shows
@@ -233,6 +234,34 @@ exports.deleteShow = async (req, res, next) => {
     } catch (err) {
         if (err.kind === 'ObjectId') {
             return res.status(404).json({ msg: 'Show not found' });
+        }
+        next(err);
+    }
+};
+
+// @desc    Sync / regenerate all multi-city shows for a given movie (Admin only)
+// @route   POST /api/shows/sync/:movieId
+// @access  Private/Admin
+exports.syncShowsForMovie = async (req, res, next) => {
+    try {
+        const movie = await Movie.findById(req.params.movieId);
+        if (!movie) {
+            return res.status(404).json({ msg: 'Movie not found' });
+        }
+
+        const theaters = await ensureTheaters();
+        const count = await seedShowsForMovie(movie._id, theaters);
+
+        const total = await Show.countDocuments({ movie: movie._id });
+        res.json({
+            success: true,
+            msg: `Synced ${count} new show slots for "${movie.title}" across ${theaters.length} theaters.`,
+            newSlots: count,
+            totalShows: total
+        });
+    } catch (err) {
+        if (err.kind === 'ObjectId') {
+            return res.status(404).json({ msg: 'Movie not found' });
         }
         next(err);
     }

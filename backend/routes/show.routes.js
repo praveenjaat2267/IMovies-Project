@@ -6,6 +6,10 @@ const { verifyAdmin, verifyToken } = require('../middleware/auth');
 // Public routes
 router.get('/', showController.getAllShows);
 router.get('/movie/:movieId', showController.getShowsByMovie);
+
+// Admin sync route — MUST be before /:id wildcard
+router.post('/sync/:movieId', verifyAdmin, showController.syncShowsForMovie);
+
 router.get('/:id', showController.getShowById);
 
 // Seat Locking & Reservation routes

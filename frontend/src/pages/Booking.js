@@ -27,6 +27,9 @@ function Booking() {
     const [confirmedBooking, setConfirmedBooking] = useState(null);
     const [showSuccessModal, setShowSuccessModal] = useState(false);
 
+    // City filter for showtime selection
+    const [cityFilter, setCityFilter] = useState('All');
+
     const token = localStorage.getItem('token');
     const currentUserId = localStorage.getItem('userId');
 
@@ -359,35 +362,104 @@ function Booking() {
                 </div>
             )}
 
-            {/* Showtime Selection Pills */}
-            {shows.length > 0 && (
-                <div className="card shadow-sm border-0 mb-4 p-3 bg-light rounded-4">
-                    <div className="d-flex align-items-center flex-wrap gap-2">
-                        <span className="fw-bold me-2">🕒 Select Showtime:</span>
-                        {shows.map(show => (
-                            <button
-                                key={show._id}
-                                type="button"
-                                className={`btn btn-sm px-3 py-2 fw-semibold rounded-pill ${selectedShow?._id === show._id ? 'btn-danger shadow-sm' : 'btn-outline-dark bg-white'}`}
-                                onClick={() => {
-                                    if (isLocked) {
-                                        if (window.confirm("Changing showtime will release your currently locked seats. Continue?")) {
-                                            handleUnlockSeats();
-                                            setSelectedShow(show);
+            {/* Showtime Selection — City Tabs + Timeslot Pills */}
+            {shows.length > 0 && (() => {
+                const cities = ['All', ...new Set(shows.map(s => s.theater?.city).filter(Boolean))];
+                const filteredShows = cityFilter === 'All'
+                    ? shows
+                    : shows.filter(s => s.theater?.city === cityFilter);
+
+                const SCREEN_BADGE = {
+                    'IMAX 3D': 'bg-warning text-dark',
+                    '4DX':     'bg-info text-dark',
+                    '3D':      'bg-primary text-white',
+                    '2D':      'bg-secondary text-white'
+                };
+
+                return (
+                    <div className="card shadow-sm border-0 mb-4 rounded-4 overflow-hidden">
+                        {/* City Tab Bar */}
+                        <div className="d-flex border-bottom bg-light px-3 pt-2 gap-1 flex-wrap">
+                            {cities.map(city => (
+                                <button
+                                    key={city}
+                                    type="button"
+                                    className={`btn btn-sm px-3 py-1 rounded-pill mb-2 fw-semibold ${cityFilter === city ? 'btn-danger' : 'btn-outline-secondary'}`}
+                                    onClick={() => {
+                                        setCityFilter(city);
+                                        if (!filteredShows.some(s => s._id === selectedShow?._id)) {
+                                            setSelectedShow(null);
                                             setSelectedSeats([]);
                                         }
-                                    } else {
-                                        setSelectedShow(show);
-                                        setSelectedSeats([]);
-                                    }
-                                }}
-                            >
-                                {show.theater?.name ? `${show.theater.name.split(' ')[0]} - ` : ''}{show.showTime} (₹{show.ticketPrice})
-                            </button>
-                        ))}
+                                    }}
+                                >
+                                    {city === 'All' ? '🌍 All Cities' :
+                                     city === 'Mumbai' ? '🏙️ Mumbai' :
+                                     city === 'Delhi NCR' ? '🏛️ Delhi NCR' :
+                                     `📍 ${city}`}
+                                </button>
+                            ))}
+                        </div>
+
+                        {/* Grouped by Theater */}
+                        <div className="p-3">
+                            {filteredShows.length === 0 ? (
+                                <p className="text-muted small mb-0">No shows available in this city. Try another city.</p>
+                            ) : (
+                                Object.entries(
+                                    filteredShows.reduce((acc, show) => {
+                                        const key = show.theater?.name || 'Unknown Theater';
+                                        if (!acc[key]) acc[key] = { theater: show.theater, slots: [] };
+                                        acc[key].slots.push(show);
+                                        return acc;
+                                    }, {})
+                                ).map(([theaterName, { theater, slots }]) => (
+                                    <div key={theaterName} className="mb-3">
+                                        <div className="small fw-bold text-muted mb-2">
+                                            📍 {theaterName}
+                                            {theater?.city && <span className="ms-1 badge bg-light text-dark border">{theater.city}</span>}
+                                        </div>
+                                        <div className="d-flex flex-wrap gap-2">
+                                            {slots.map(show => {
+                                                const screenInfo = theater?.screens?.[0];
+                                                const screenType = screenInfo?.screenType || '2D';
+                                                const badgeClass = SCREEN_BADGE[screenType] || 'bg-secondary text-white';
+                                                const isActive = selectedShow?._id === show._id;
+                                                return (
+                                                    <button
+                                                        key={show._id}
+                                                        type="button"
+                                                        className={`btn btn-sm px-3 py-2 fw-semibold rounded-3 ${isActive ? 'btn-danger shadow' : 'btn-outline-dark bg-white'}`}
+                                                        onClick={() => {
+                                                            if (isLocked) {
+                                                                if (window.confirm('Changing showtime will release your locked seats. Continue?')) {
+                                                                    handleUnlockSeats();
+                                                                    setSelectedShow(show);
+                                                                    setSelectedSeats([]);
+                                                                }
+                                                            } else {
+                                                                setSelectedShow(show);
+                                                                setSelectedSeats([]);
+                                                                setErrorMsg('');
+                                                            }
+                                                        }}
+                                                    >
+                                                        <div>{show.showTime}</div>
+                                                        <div className="d-flex align-items-center gap-1 mt-1">
+                                                            <span className={`badge ${badgeClass}`} style={{ fontSize: '0.6rem' }}>{screenType}</span>
+                                                            <span className="text-success fw-bold" style={{ fontSize: '0.75rem' }}>₹{show.ticketPrice}</span>
+                                                        </div>
+                                                    </button>
+                                                );
+                                            })}
+                                        </div>
+                                    </div>
+                                ))
+                            )}
+                        </div>
                     </div>
-                </div>
-            )}
+                );
+            })()}
 
             <div className="row g-4">
                 {/* Seat Matrix Column */}

@@ -44,6 +44,7 @@ const Admin = require('./models/Admin');
 const Theater = require('./models/Theater');
 const Show = require('./models/Show');
 const Review = require('./models/Review');
+const { seedAllShows } = require('./utils/showSeeder');
 
 mongoose.connect(process.env.MONGO_URI)
     .then(async () => {
@@ -60,66 +61,8 @@ mongoose.connect(process.env.MONGO_URI)
         const seededMovies = await Movie.find();
         console.log(`Synced ${seededMovies.length} blockbuster movies with banners & showtimes!`);
 
-        // 2. Seed Theaters if collection is empty
-        const theaterCount = await Theater.countDocuments();
-        let seededTheaters = [];
-        if (theaterCount === 0) {
-            seededTheaters = await Theater.create([
-                {
-                    name: "PVR IMAX Phoenix",
-                    city: "Mumbai",
-                    address: "Phoenix Marketcity, Kurla West",
-                    screens: [
-                        { screenNumber: 1, screenType: 'IMAX 3D', totalSeats: 40 },
-                        { screenNumber: 2, screenType: '2D', totalSeats: 40 }
-                    ]
-                },
-                {
-                    name: "INOX Megaplex",
-                    city: "Delhi",
-                    address: "Nehru Place, Metro Station Complex",
-                    screens: [
-                        { screenNumber: 1, screenType: '4DX', totalSeats: 40 },
-                        { screenNumber: 2, screenType: '2D', totalSeats: 40 }
-                    ]
-                },
-                {
-                    name: "Cinepolis Forum Mall",
-                    city: "Bengaluru",
-                    address: "Koramangala, Hosur Road",
-                    screens: [
-                        { screenNumber: 1, screenType: '2D', totalSeats: 40 }
-                    ]
-                }
-            ]);
-            console.log("Sample theaters seeded successfully!");
-        } else {
-            seededTheaters = await Theater.find().limit(3);
-        }
-
-        // 3. Seed Shows if collection is empty
-        const showCount = await Show.countDocuments();
-        if (showCount === 0 && seededMovies.length > 0 && seededTheaters.length > 0) {
-            const showTimes = ["10:30 AM", "02:15 PM", "06:45 PM", "09:30 PM"];
-            const showsToCreate = [];
-
-            for (const movie of seededMovies) {
-                for (let i = 0; i < seededTheaters.length; i++) {
-                    const theater = seededTheaters[i];
-                    showsToCreate.push({
-                        movie: movie._id,
-                        theater: theater._id,
-                        screenNumber: 1,
-                        showTime: showTimes[i % showTimes.length],
-                        showDate: new Date(),
-                        ticketPrice: 150 + (i * 50),
-                        bookedSeats: ['A1', 'B2']
-                    });
-                }
-            }
-            await Show.create(showsToCreate);
-            console.log(`Created ${showsToCreate.length} active movie shows and schedules!`);
-        }
+        // 2 & 3. Seed / Sync Theaters + Shows for all movies across all cities
+        await seedAllShows(seededMovies);
 
         // 4. Seed Default Admin in User & Admin collections
         const adminExists = await User.findOne({ role: 'admin' });

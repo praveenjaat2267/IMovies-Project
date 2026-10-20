@@ -220,6 +220,18 @@ function AdminDashboard() {
         }
     };
 
+    const handleSyncShows = async (movieId, movieTitle) => {
+        try {
+            const res = await showAPI.syncShows(movieId);
+            showStatus('success', res.data?.msg || `Shows synced for "${movieTitle}" across all cities!`);
+            const showsRes = await showAPI.getAll();
+            setShows(showsRes.data);
+        } catch (err) {
+            console.error('Sync shows error:', err);
+            showStatus('danger', err.response?.data?.msg || 'Failed to sync shows for this movie.');
+        }
+    };
+
     // Filtered movies
     const filteredMovies = movies.filter(m => {
         const query = searchTerm.toLowerCase();
@@ -538,14 +550,23 @@ function AdminDashboard() {
                                                             <button
                                                                 className="btn btn-outline-primary"
                                                                 onClick={() => handleEditMovie(movie)}
+                                                                title="Edit movie details"
                                                             >
-                                                                Edit
+                                                                ✏️ Edit
+                                                            </button>
+                                                            <button
+                                                                className="btn btn-outline-success"
+                                                                onClick={() => handleSyncShows(movie._id, movie.title)}
+                                                                title="Generate shows across all 6 theaters (3 cities × 4 timeslots)"
+                                                            >
+                                                                🔄 Sync Shows
                                                             </button>
                                                             <button
                                                                 className="btn btn-outline-danger"
                                                                 onClick={() => handleDeleteMovie(movie._id, movie.title)}
+                                                                title="Remove from catalog"
                                                             >
-                                                                Delete
+                                                                🗑️ Delete
                                                             </button>
                                                         </div>
                                                     </td>

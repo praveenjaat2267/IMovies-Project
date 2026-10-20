@@ -1,4 +1,5 @@
 const Movie = require('../models/Movie');
+const { seedShowsForMovie, ensureTheaters } = require('../utils/showSeeder');
 
 // @desc    Get all movies with optional filters (search, genre, language)
 // @route   GET /api/movies
@@ -85,6 +86,16 @@ exports.createMovie = async (req, res, next) => {
         });
 
         const savedMovie = await newMovie.save();
+
+        // Auto-generate multi-city shows for the new movie
+        try {
+            const theaters = await ensureTheaters();
+            await seedShowsForMovie(savedMovie._id, theaters);
+        } catch (seedErr) {
+            console.error('[MovieController] Auto-show seeding error:', seedErr.message);
+            // Non-fatal — movie was saved, shows can be scheduled manually
+        }
+
         res.status(201).json(savedMovie);
     } catch (err) {
         next(err);
